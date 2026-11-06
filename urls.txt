@@ -4,5 +4,6 @@
 https://www.santogames.cl/preventas-tcg/preventa-one-piece-card-game
 https://www.santogames.cl/catalogo/preventas-pokemon-tcg
 https://www.updown.cl/categoria-producto/cartas-tcg/pokemon/
+https://www.lider.cl/catalogo/v/pokemon?itemsperpage=24&sortingorder=ascending&filter=vendido-por%3Alider
 
 # https://tienda3.cl/tcg | .product-card a
