@@ -1,0 +1,6 @@
+# Una URL por línea. Si hace falta, agrega un selector CSS después de " | "
+# Las líneas que empiezan con # se ignoran.
+
+https://tienda1.cl/categoria/pokemon
+https://tienda2.cl/novedades
+# https://tienda3.cl/tcg | .product-card a
