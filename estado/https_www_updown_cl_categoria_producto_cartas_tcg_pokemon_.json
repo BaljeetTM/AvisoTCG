@@ -1,0 +1,246 @@
+{
+ "url": "https://www.updown.cl/categoria-producto/cartas-tcg/pokemon/",
+ "metodo": "woocommerce",
+ "productos": {
+  "https://www.updown.cl/producto/pokemon-delta-reign-sobre-ingles/": {
+   "nombre": "Pokémon Delta Reign Sobre Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-sobre-ingles/",
+   "precio": 5990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-sobre-espanol/": {
+   "nombre": "Pokémon Delta Reign Sobre Español",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-sobre-espanol/",
+   "precio": 5990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-etb-espanol-elite-trainer-box/": {
+   "nombre": "Pokémon Delta Reign ETB Español Elite Trainer Box",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-etb-espanol-elite-trainer-box/",
+   "precio": 62990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-chaos-rising-mini-album-sobre-ingles/": {
+   "nombre": "Pokemon Pitch Black Mini Album + Sobre Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-chaos-rising-mini-album-sobre-ingles/",
+   "precio": 7490,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-booster-display-36-sobres-espanol/": {
+   "nombre": "Pokémon Delta Reign Booster Display 36 Sobres Español",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-booster-display-36-sobres-espanol/",
+   "precio": 215640,
+   "precio_antes": 215640,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-bundle-ingles/": {
+   "nombre": "Pokémon Delta Reign Bundle Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-bundle-ingles/",
+   "precio": 36990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-bundle-espanol/": {
+   "nombre": "Pokémon Delta Reign Bundle Español",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-bundle-espanol/",
+   "precio": 31990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-seel-blister-ingles/": {
+   "nombre": "Pokémon Delta Reign Seel Blister Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-seel-blister-ingles/",
+   "precio": 18990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-delta-reign-seel-blister-espanol/": {
+   "nombre": "Pokémon Delta Reign Seel Blister Español",
+   "url": "https://www.updown.cl/producto/pokemon-delta-reign-seel-blister-espanol/",
+   "precio": 18990,
+   "precio_antes": 18990,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-binder-collection-ingles/": {
+   "nombre": "Pokémon 30th Celebration Binder Collection Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-binder-collection-ingles/",
+   "precio": 67990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-lucario-tech-sticker-blister-ingles/": {
+   "nombre": "Pokémon 30th Celebration Lucario Tech Sticker Blister Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-lucario-tech-sticker-blister-ingles/",
+   "precio": 35990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-umbreon-ultra-premium-collection-ingles/": {
+   "nombre": "Pokémon 30th Celebration Umbreon Ultra Premium Collection Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-umbreon-ultra-premium-collection-ingles/",
+   "precio": 399990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-ditto-premium-collection-espanol/": {
+   "nombre": "Pokémon 30th Celebration Ditto Premium Collection Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-ditto-premium-collection-espanol/",
+   "precio": 69990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-greninja-ex-box-espanol/": {
+   "nombre": "Pokémon 30th Celebration Greninja ex Box Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-greninja-ex-box-espanol/",
+   "precio": 34990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-sylveon-ex-box-espanol/": {
+   "nombre": "Pokémon 30th Celebration Sylveon ex Box Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-sylveon-ex-box-espanol/",
+   "precio": 34990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-figure-collection-ingles/": {
+   "nombre": "Pokémon 30th Celebration Mewtwo Figure Collection Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-figure-collection-ingles/",
+   "precio": 69990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-figure-collection-espanol/": {
+   "nombre": "Pokémon 30th Celebration Mewtwo Figure Collection Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-figure-collection-espanol/",
+   "precio": 44990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-mew-figure-collection-ingles/": {
+   "nombre": "Pokémon 30th Celebration Mew Figure Collection Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-mew-figure-collection-ingles/",
+   "precio": 69990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-mew-figure-collection-espanol/": {
+   "nombre": "Pokémon 30th Celebration Mew Figure Collection Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-mew-figure-collection-espanol/",
+   "precio": 44990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-greninja-e-illumise-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Greninja e Illumise Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-greninja-e-illumise-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-pikachu-y-toxtricity-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Pikachu y Toxtricity Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-pikachu-y-toxtricity-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-y-scraggy-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Mewtwo y Scraggy Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-mewtwo-y-scraggy-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-zapdos-y-zorua-de-hisui-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Zapdos y Zorua de Hisui Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-zapdos-y-zorua-de-hisui-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-moltres-y-articuno-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Moltres y Articuno Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-moltres-y-articuno-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-lapras-y-drifloon-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Lapras y Drifloon Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-lapras-y-drifloon-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-pikachu-y-vivillon-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Pikachu y Vivillon Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-pikachu-y-vivillon-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-espeon-y-meowth-mini-tin-ingles/": {
+   "nombre": "Pokémon 30th Celebration Espeon y Meowth Mini Tin Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-espeon-y-meowth-mini-tin-ingles/",
+   "precio": 24990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-poster-collection-ingles/": {
+   "nombre": "Pokémon 30th Celebration Poster Collection Inglés",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-poster-collection-ingles/",
+   "precio": 34990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-poster-collection-espanol/": {
+   "nombre": "Pokémon 30th Celebration Poster Collection Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-poster-collection-espanol/",
+   "precio": 27990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  },
+  "https://www.updown.cl/producto/pokemon-30th-celebration-exeggutor-tech-sticker-blister-espanol/": {
+   "nombre": "Pokémon 30th Celebration Exeggutor Tech Sticker Blister Español",
+   "url": "https://www.updown.cl/producto/pokemon-30th-celebration-exeggutor-tech-sticker-blister-espanol/",
+   "precio": 29990,
+   "precio_antes": null,
+   "agotado": false,
+   "sku": ""
+  }
+ }
+}
