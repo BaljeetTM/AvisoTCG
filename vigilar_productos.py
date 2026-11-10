@@ -1,38 +1,35 @@
 #!/usr/bin/env python3
 """
-Vigila una tienda online y avisa cuando aparecen productos nuevos.
+Vigila tiendas online y avisa por Telegram cuando:
+  🆕 aparece un producto nuevo
+  📦 un producto agotado vuelve a tener stock
+  💸 un producto baja de precio
+
+Cómo funciona (scraping por tarjetas):
+  1. Descarga el HTML de la página.
+  2. Busca cada "tarjeta" de producto (el recuadro con foto, nombre y precio).
+  3. De cada tarjeta saca: nombre, precio, precio anterior, si está agotado, SKU y enlace.
+  4. Compara con lo que vio la vez anterior (guardado en la carpeta de estado).
+
+Plataformas soportadas:
+  - Jumpseller (ej. santogames.cl): tarjetas .product-block
+  - WooCommerce (ej. tiendas WordPress): tarjetas li.product, o su API pública
+  - Shopify: API pública /products.json
+  - Cualquier otra: indicando en urls.txt el selector CSS de la tarjeta → "URL | .mi-tarjeta"
 
 Uso:
-    python3 vigilar_productos.py https://tienda.cl/collections/pokemon
-    python3 vigilar_productos.py https://tienda1.cl/pokemon https://tienda2.cl/novedades
-    python3 vigilar_productos.py --archivo urls.txt --intervalo 300
+    python3 vigilar_productos.py --archivo urls.txt            # revisa cada 10 min
+    python3 vigilar_productos.py --archivo urls.txt --una-vez  # una sola vez (GitHub Actions / cron)
+    python3 vigilar_productos.py https://tienda.cl/categoria --probar   # muestra qué productos detecta
 
-Archivo urls.txt (una por línea; el selector CSS es opcional):
-    # Tiendas Pokémon
-    https://tienda1.cl/categoria/pokemon
-    https://tienda2.cl/novedades | .product-card a
-
-Cómo detecta productos (en este orden):
-  1. Tiendas Shopify: usa /products.json (lo más confiable).
-  2. Si pasas --selector: toma los elementos que calcen con ese selector CSS.
-  3. Si no: busca enlaces que parezcan de producto (/products/, /producto/, /product/, /p/).
-  4. Último recurso: compara un hash del texto de la página (avisa de "cambios", no de productos).
-
-Avisos: consola + notificación de escritorio (notify-send en Linux).
-Opcional WhatsApp (CallMeBot): define WHATSAPP_PHONE y WHATSAPP_APIKEY.
-Opcional Telegram: define TELEGRAM_TOKEN y TELEGRAM_CHAT_ID.
-
-Requisitos: pip install requests beautifulsoup4
+Telegram: define las variables de entorno TELEGRAM_TOKEN y TELEGRAM_CHAT_ID.
+Requisitos: pip install requests beautifulsoup4 curl_cffi
 """
 
 import argparse
-import hashlib
 import json
 import os
 import re
-import shutil
-import subprocess
-import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -41,7 +38,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
-# curl_cffi imita la "huella" de un Chrome real; evita muchos bloqueos 403 (Cloudflare, etc.)
+# curl_cffi imita la "huella" de un Chrome real; evita varios bloqueos 403
 try:
     from curl_cffi import requests as navegador
     SESION = navegador.Session(impersonate="chrome")
@@ -54,189 +51,218 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "es-CL,es;q=0.9,en;q=0.8",
 }
-PATRON_PRODUCTO = re.compile(r"/(products?|producto|productos|p)/[^/?#]+", re.I)
-PATRON_PRECIO = re.compile(r"\$\s?\d{1,3}(?:[.,]\d{3})+|\$\s?\d{4,}")
-PATRON_CATEGORIA_WOO = re.compile(r"/(?:categoria-producto|product-category)/(?:.*/)?([^/]+)/?$")
-EXCLUIR = re.compile(r"/(cart|carrito|checkout|cuenta|account|login|registro|blog|contacto|"
-                     r"categoria|category|catalogo|collections?|tag|search|buscar)(/|$)", re.I)
 
+
+# =====================================================================
+#  PERFILES: dónde está cada dato dentro de la tarjeta, según la plataforma.
+#  Para agregar una tienda nueva basta con agregar un perfil aquí.
+# =====================================================================
+PERFILES = {
+    "jumpseller": {
+        "tarjeta":      ".product-block",
+        "nombre":       ".product-block__name",
+        "enlace":       "a.product-block__name, a.product-block__anchor",
+        "precio":       ".product-block__price--new, .product-block__price",
+        "precio_antes": ".product-block__price--old",
+        "agotado":      ".product-block__label--status",   # "Agotado" / "No disponible"
+        "sku":          ".product-block__sku",
+    },
+    "woocommerce": {
+        "tarjeta":      "li.product, div.product.type-product",
+        "nombre":       ".woocommerce-loop-product__title, h2, h3",
+        "enlace":       "a.woocommerce-LoopProduct-link, a",
+        "precio":       ".price ins .amount, .price .amount",
+        "precio_antes": ".price del .amount",
+        "agotado":      ".out-of-stock, .outofstock, .stock.out-of-stock",
+        "sku":          None,
+    },
+}
+
+
+# ------------------------------------------------------------ utilidades
 
 def descargar(url, **kw):
     kw.setdefault("timeout", 25)
     return SESION.get(url, headers=HEADERS, **kw)
 
 
-def es_json(r):
-    return r.status_code == 200 and "json" in r.headers.get("Content-Type", "")
+def a_numero(texto):
+    """'$149,990 CLP' → 149990   |   '$ 54.990' → 54990"""
+    if not texto:
+        return None
+    texto = re.sub(r"[.,]\d{2}(?=\D*$)", "", texto)  # quitar decimales tipo ",00" o ".99"
+    digitos = re.sub(r"\D", "", texto)
+    return int(digitos) if digitos else None
 
 
-# ---------------------------------------------------------------- extracción
+def formato_precio(n):
+    return f"${n:,.0f}".replace(",", ".") if n else "$?"
 
-def productos_shopify(url):
-    """Devuelve {id: texto} si la tienda es Shopify, o None."""
+
+def texto_de(tarjeta, selector):
+    if not selector:
+        return ""
+    el = tarjeta.select_one(selector)
+    return el.get_text(" ", strip=True) if el else ""
+
+
+def producto(nombre, url, precio=None, precio_antes=None, agotado=False, sku=""):
+    return {"nombre": nombre.strip(), "url": url, "precio": precio,
+            "precio_antes": precio_antes, "agotado": agotado, "sku": sku}
+
+
+# ------------------------------------------------------------ extractores
+
+def extraer_tarjetas(html, url, perfil):
+    """Recorre cada tarjeta de producto y saca sus datos según el perfil."""
+    sopa = BeautifulSoup(html, "html.parser")
+    productos = {}
+    for tarjeta in sopa.select(perfil["tarjeta"]):
+        enlace_el = tarjeta.select_one(perfil["enlace"]) or tarjeta.find("a", href=True)
+        if not enlace_el or not enlace_el.get("href"):
+            continue
+        enlace = urljoin(url, enlace_el["href"]).split("?")[0].split("#")[0]
+        nombre = texto_de(tarjeta, perfil["nombre"]) or enlace_el.get("title", "") or enlace
+        estado = texto_de(tarjeta, perfil["agotado"]).lower()
+        agotado = bool(perfil["agotado"] and tarjeta.select_one(perfil["agotado"])) and (
+            not estado or any(p in estado for p in ("agotado", "no disponible", "sin stock", "out of stock")))
+        # En WooCommerce la propia tarjeta lleva la clase "outofstock"
+        agotado = agotado or bool({"outofstock", "out-of-stock"} & set(tarjeta.get("class", [])))
+        productos[enlace] = producto(
+            nombre, enlace,
+            precio=a_numero(texto_de(tarjeta, perfil["precio"])),
+            precio_antes=a_numero(texto_de(tarjeta, perfil["precio_antes"])),
+            agotado=agotado,
+            sku=texto_de(tarjeta, perfil["sku"]),
+        )
+    return productos
+
+
+def extraer_con_selector(html, url, selector):
+    """Para tiendas sin perfil: el usuario indica el selector de la tarjeta."""
+    perfil = {"tarjeta": selector, "nombre": "h1, h2, h3, h4, [class*=name], [class*=title]",
+              "enlace": "a[href]", "precio": "[class*=price]", "precio_antes": "del, s",
+              "agotado": "[class*=agotado], [class*=out-of-stock], [class*=sold-out]", "sku": None}
+    return extraer_tarjetas(html, url, perfil)
+
+
+def extraer_shopify(url):
     p = urlparse(url)
     ruta = p.path.rstrip("/")
-    # Si es una colección, usa sus productos; si no, los de toda la tienda
-    if "/collections/" in ruta:
-        api = f"{p.scheme}://{p.netloc}{ruta}/products.json"
-    else:
-        api = f"{p.scheme}://{p.netloc}/products.json"
-    productos = {}
+    api = (f"{p.scheme}://{p.netloc}{ruta}/products.json" if "/collections/" in ruta
+           else f"{p.scheme}://{p.netloc}/products.json")
     try:
-        for pagina in range(1, 6):  # hasta 1250 productos
-            r = descargar(api, params={"limit": 250, "page": pagina})
-            if not es_json(r):
-                return None
-            lote = r.json().get("products", [])
-            for prod in lote:
-                disponible = any(v.get("available") for v in prod.get("variants", []))
-                precio = (prod.get("variants") or [{}])[0].get("price", "?")
-                url_prod = f"{p.scheme}://{p.netloc}/products/{prod['handle']}"
-                productos[str(prod["id"])] = (
-                    f"{prod['title']} — ${precio}"
-                    f"{'' if disponible else ' (agotado)'}\n   {url_prod}"
-                )
-            if len(lote) < 250:
-                break
+        r = descargar(api, params={"limit": 250})
+        if r.status_code != 200 or "json" not in r.headers.get("Content-Type", ""):
+            return None
+        productos = {}
+        for prod in r.json().get("products", []):
+            variantes = prod.get("variants") or [{}]
+            enlace = f"{p.scheme}://{p.netloc}/products/{prod['handle']}"
+            productos[enlace] = producto(
+                prod["title"], enlace,
+                precio=a_numero(str(variantes[0].get("price", "")).split(".")[0]),
+                precio_antes=a_numero(str(variantes[0].get("compare_at_price") or "").split(".")[0]),
+                agotado=not any(v.get("available") for v in variantes),
+                sku=variantes[0].get("sku") or "")
         return productos
     except Exception:
         return None
 
 
-def productos_woocommerce(url):
-    """Usa la API pública de tiendas WooCommerce (WordPress). Devuelve {id: texto} o None."""
+def extraer_woocommerce_api(url):
+    """API pública de WooCommerce; sirve cuando la página HTML está bloqueada."""
     p = urlparse(url)
     base = f"{p.scheme}://{p.netloc}/wp-json/wc/store/v1"
     params = {"per_page": 100, "orderby": "date", "order": "desc"}
     try:
-        m = PATRON_CATEGORIA_WOO.search(p.path)
-        if m:  # página de categoría → buscar el id de esa categoría
+        m = re.search(r"/(?:categoria-producto|product-category)/(?:.*/)?([^/]+)/?$", p.path)
+        if m:
             r = descargar(f"{base}/products/categories", params={"per_page": 100})
-            if not es_json(r):
-                return None
             ids = [str(c["id"]) for c in r.json() if c.get("slug") == m.group(1)]
             if not ids:
                 return None
             params["category"] = ids[0]
+        r = descargar(f"{base}/products", params=params)
+        if r.status_code != 200:
+            return None
         productos = {}
-        for pagina in range(1, 4):  # hasta 300 productos
-            r = descargar(f"{base}/products", params={**params, "page": pagina})
-            if not es_json(r):
-                return None if pagina == 1 else productos
-            lote = r.json()
-            for prod in lote:
-                precios = prod.get("prices") or {}
-                try:
-                    valor = int(precios.get("price", 0)) / 10 ** int(precios.get("currency_minor_unit", 0))
-                    precio = f"${valor:,.0f}".replace(",", ".")
-                except (TypeError, ValueError):
-                    precio = "$?"
-                agotado = "" if prod.get("is_in_stock", True) else " (agotado)"
-                productos[str(prod["id"])] = (
-                    f"{BeautifulSoup(prod.get('name', ''), 'html.parser').get_text()} — "
-                    f"{precio}{agotado}\n   {prod.get('permalink', '')}"
-                )
-            if len(lote) < 100:
-                break
+        for prod in r.json():
+            pr = prod.get("prices") or {}
+            div = 10 ** int(pr.get("currency_minor_unit") or 0)
+            precio = int(pr["price"]) // div if pr.get("price") else None
+            antes = int(pr["regular_price"]) // div if pr.get("regular_price") else None
+            nombre = BeautifulSoup(prod.get("name", ""), "html.parser").get_text()
+            productos[prod["permalink"]] = producto(
+                nombre, prod["permalink"], precio=precio,
+                precio_antes=antes if antes and precio and antes > precio else None,
+                agotado=not prod.get("is_in_stock", True), sku=prod.get("sku", ""))
         return productos
     except Exception:
         return None
 
 
-def _agregar(productos, enlace, texto):
-    """Guarda el producto quedándose con el nombre más largo si el enlace se repite."""
-    actual = productos.get(enlace, "").split("\n")[0]
-    if len(texto) > len(actual) or enlace not in productos:
-        productos[enlace] = f"{texto or enlace}\n   {enlace}"
-
-
-def productos_html(url, selector=None):
-    """Devuelve ({clave: texto}, hash_pagina, info) a partir del HTML."""
-    r = descargar(url)
-    r.raise_for_status()
-    sopa = BeautifulSoup(r.text, "html.parser")
-    productos = {}
-    dominio = urlparse(url).netloc
-
+def obtener_productos(url, selector=None):
+    """Elige el mejor método para la página y devuelve (productos, metodo)."""
     if selector:
-        for el in sopa.select(selector):
-            texto = el.get_text(" ", strip=True)
-            href = el.get("href") or (el.find("a") or {}).get("href")
-            enlace = urljoin(url, href) if href else ""
-            clave = enlace or texto
-            if clave:
-                productos[clave] = f"{texto}\n   {enlace}".rstrip()
-    else:
-        # 1) Enlaces con forma típica de producto (/producto/..., /products/...)
-        for a in sopa.find_all("a", href=True):
-            enlace = urljoin(url, a["href"]).split("#")[0].split("?")[0]
-            if PATRON_PRODUCTO.search(urlparse(enlace).path):
-                _agregar(productos, enlace, a.get_text(" ", strip=True) or a.get("title", ""))
-        # 2) Si no hubo, buscar "tarjetas": un enlace dentro de un bloque pequeño que tiene un precio
-        if not productos:
-            for a in sopa.find_all("a", href=True):
-                enlace = urljoin(url, a["href"]).split("#")[0].split("?")[0]
-                ruta = urlparse(enlace).path
-                if (urlparse(enlace).netloc != dominio or ruta.strip("/") == ""
-                        or EXCLUIR.search(ruta) or enlace.rstrip("/") == url.rstrip("/")):
-                    continue
-                bloque = a
-                for _ in range(5):
-                    bloque = bloque.parent
-                    if bloque is None:
-                        break
-                    texto_bloque = bloque.get_text(" ", strip=True)
-                    if len(texto_bloque) > 400:
-                        break
-                    if PATRON_PRECIO.search(texto_bloque):
-                        img = a.find("img")
-                        nombre = (a.get_text(" ", strip=True) or a.get("title", "")
-                                  or (img.get("alt", "") if img else ""))
-                        _agregar(productos, enlace, nombre)
-                        break
+        r = descargar(url)
+        r.raise_for_status()
+        return extraer_con_selector(r.text, url, selector), "selector"
 
-    titulo = sopa.title.get_text(strip=True) if sopa.title else "(sin título)"
-    info = f"título '{titulo[:60]}', {len(sopa.find_all('a'))} enlaces, {len(r.text) // 1024} KB"
-    for basura in sopa(["script", "style", "noscript"]):
-        basura.decompose()
-    hash_pagina = hashlib.sha256(sopa.get_text(" ", strip=True).encode()).hexdigest()
-    return productos, hash_pagina, info
+    productos = extraer_shopify(url)
+    if productos:
+        return productos, "shopify"
+
+    try:
+        r = descargar(url)
+        r.raise_for_status()
+    except Exception:
+        # Página bloqueada (ej. 403): intentar API de WooCommerce
+        productos = extraer_woocommerce_api(url)
+        if productos is not None:
+            return productos, "woocommerce-api"
+        raise
+
+    for nombre, perfil in PERFILES.items():
+        productos = extraer_tarjetas(r.text, url, perfil)
+        if productos:
+            return productos, nombre
+    productos = extraer_woocommerce_api(url)
+    if productos:
+        return productos, "woocommerce-api"
+    return {}, "ninguno"
 
 
-# ---------------------------------------------------------------- avisos
+# ------------------------------------------------------------ avisos
 
-def avisar(titulo, mensaje):
+def describir(p):
+    linea = f"• {p['nombre']} — {formato_precio(p['precio'])}"
+    if p.get("precio_antes") and p.get("precio") and p["precio_antes"] > p["precio"]:
+        linea += f" (antes {formato_precio(p['precio_antes'])})"
+    if p.get("agotado"):
+        linea += " [AGOTADO]"
+    return f"{linea}\n  {p['url']}"
+
+
+def avisar(titulo, productos):
+    mensaje = "\n\n".join(describir(p) for p in productos)
     print(f"\n🔔 {titulo}\n{mensaje}\n", flush=True)
-    if shutil.which("notify-send"):
-        subprocess.run(["notify-send", "-u", "critical", titulo, mensaje[:500]],
-                       check=False)
     token, chat = os.getenv("TELEGRAM_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
     if token and chat:
         try:
-            requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
-                          data={"chat_id": chat, "text": f"{titulo}\n\n{mensaje}"[:4000],
-                                "disable_web_page_preview": True}, timeout=15)
+            r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                              data={"chat_id": chat, "text": f"{titulo}\n\n{mensaje}"[:4000],
+                                    "disable_web_page_preview": True}, timeout=15)
+            if not r.ok:
+                print(f"(Telegram respondió {r.status_code}: {r.text[:200]})")
         except requests.RequestException as e:
             print(f"(No se pudo enviar a Telegram: {e})")
-    # WhatsApp vía CallMeBot (gratis, solo a tu propio número)
-    tel, clave = os.getenv("WHATSAPP_PHONE"), os.getenv("WHATSAPP_APIKEY")
-    if tel and clave:
-        try:
-            r = requests.get("https://api.callmebot.com/whatsapp.php",
-                             params={"phone": tel.lstrip("+"), "apikey": clave,
-                                     "text": f"*{titulo}*\n\n{mensaje}"[:1500]},
-                             timeout=30)
-            if r.status_code != 200:
-                print(f"(WhatsApp respondió {r.status_code}: {r.text[:200]})")
-        except requests.RequestException as e:
-            print(f"(No se pudo enviar a WhatsApp: {e})")
 
 
-# ---------------------------------------------------------------- estado
+# ------------------------------------------------------------ estado
 
 def archivo_estado(url):
     nombre = re.sub(r"[^a-zA-Z0-9]+", "_", url)[:80]
-    # En GitHub Actions se usa la carpeta "estado" del repo (variable VIGILAR_ESTADO)
     carpeta = Path(os.getenv("VIGILAR_ESTADO", Path.home() / ".vigilar_productos"))
     carpeta.mkdir(parents=True, exist_ok=True)
     return carpeta / f"{nombre}.json"
@@ -244,93 +270,86 @@ def archivo_estado(url):
 
 def cargar(ruta):
     try:
-        return json.loads(ruta.read_text())
-    except (FileNotFoundError, ValueError):
+        datos = json.loads(ruta.read_text(encoding="utf-8"))
+        productos = datos.get("productos") or {}
+        # Estados de versiones anteriores del script (texto en vez de datos) → empezar de cero
+        if any(not isinstance(v, dict) for v in productos.values()):
+            return None
+        return productos or None
+    except (FileNotFoundError, ValueError, AttributeError):
         return None
 
 
-# ---------------------------------------------------------------- bucle
+# ------------------------------------------------------------ revisión
 
-def revisar(url, selector, estado_ruta):
-    ahora = datetime.now().strftime("%H:%M:%S")
-    sitio = urlparse(url).netloc.replace("www.", "")
-    ruta = urlparse(url).path.strip("/") or "inicio"
-    etiqueta = f"{sitio} /{ruta}"
-    anterior = cargar(estado_ruta)
+def revisar(url, selector):
+    hora = datetime.now().strftime("%H:%M:%S")
+    p = urlparse(url)
+    sitio = p.netloc.replace("www.", "")
+    etiqueta = f"{sitio}/{p.path.strip('/')}"
+    ruta = archivo_estado(url)
+    anteriores = cargar(ruta)
 
-    productos, modo, hash_pagina, info = None, None, None, ""
-    if not selector:
-        productos = productos_shopify(url)
-        modo = "shopify" if productos is not None else None
-        if productos is None and PATRON_CATEGORIA_WOO.search(urlparse(url).path):
-            productos = productos_woocommerce(url)
-            modo = "woocommerce" if productos is not None else None
-    if productos is None:
-        try:
-            productos, hash_pagina, info = productos_html(url, selector)
-            modo = "selector" if selector else ("enlaces" if productos else "hash")
-        except Exception as e:
-            # Página bloqueada (403, etc.): intentar la API de WooCommerce como plan B
-            productos = productos_woocommerce(url) if not selector else None
-            if productos is None:
-                raise
-            modo = "woocommerce"
+    actuales, metodo = obtener_productos(url, selector)
 
-    nuevo_estado = {"modo": modo, "productos": productos, "hash": hash_pagina}
+    if not actuales:
+        print(f"[{hora}] ⚠️  {etiqueta}: no detecté productos. "
+              "Agrega en urls.txt el selector de la tarjeta: URL | .clase-de-la-tarjeta")
+        return
 
-    # Si antes no había productos guardados (ej. falló la detección), se toma como primera vez
-    if anterior is None or not anterior.get("productos"):
-        print(f"[{ahora}] {etiqueta}: primera revisión ({modo}), {len(productos)} productos guardados.")
-    elif modo == "hash":
-        pass  # no se pudieron detectar productos; ver aviso abajo
+    if anteriores is None:
+        print(f"[{hora}] {etiqueta}: primera revisión ({metodo}), "
+              f"{len(actuales)} productos guardados.")
     else:
-        viejos = anterior.get("productos", {})
-        nuevos = {k: v for k, v in productos.items() if k not in viejos}
-        # En Shopify, avisa también si algo agotado vuelve a tener stock
-        repuestos = {k: v for k, v in productos.items()
-                     if k in viejos and "(agotado)" in viejos[k] and "(agotado)" not in v}
+        nuevos = [v for k, v in actuales.items() if k not in anteriores]
+        repuestos = [v for k, v in actuales.items()
+                     if k in anteriores and anteriores[k].get("agotado") and not v["agotado"]]
+        rebajas = [v for k, v in actuales.items()
+                   if k in anteriores and v["precio"] and anteriores[k].get("precio")
+                   and v["precio"] < anteriores[k]["precio"]]
         if nuevos:
-            avisar(f"🆕 {sitio}: {len(nuevos)} producto(s) nuevo(s)",
-                   "\n".join(f"• {v}" for v in nuevos.values()))
+            avisar(f"🆕 {sitio}: {len(nuevos)} producto(s) nuevo(s)", nuevos)
         if repuestos:
-            avisar(f"📦 {sitio}: {len(repuestos)} producto(s) volvieron a tener stock",
-                   "\n".join(f"• {v}" for v in repuestos.values()))
-        if not nuevos and not repuestos:
-            print(f"[{ahora}] {etiqueta}: sin novedades ({len(productos)} productos).")
+            avisar(f"📦 {sitio}: {len(repuestos)} producto(s) volvieron a tener stock", repuestos)
+        if rebajas:
+            avisar(f"💸 {sitio}: {len(rebajas)} producto(s) bajaron de precio",
+                   [dict(v, precio_antes=anteriores[v["url"]]["precio"]) for v in rebajas])
+        if not (nuevos or repuestos or rebajas):
+            print(f"[{hora}] {etiqueta}: sin novedades ({len(actuales)} productos, {metodo}).")
 
-    if modo == "hash":
-        print(f"[{ahora}] ⚠️  {etiqueta}: no detecté productos ({info}). "
-              "Puede que la página los cargue con JavaScript; prueba con un selector CSS.")
+    ruta.write_text(json.dumps({"url": url, "metodo": metodo, "productos": actuales},
+                               ensure_ascii=False, indent=1), encoding="utf-8")
 
-    estado_ruta.write_text(json.dumps(nuevo_estado, ensure_ascii=False, indent=1))
 
+def probar(url, selector):
+    """Muestra en pantalla lo que se detecta, sin guardar nada ni avisar."""
+    productos, metodo = obtener_productos(url, selector)
+    print(f"{url}\nMétodo: {metodo} — {len(productos)} productos\n")
+    for p in productos.values():
+        print(describir(p) + (f"\n  SKU: {p['sku']}" if p.get("sku") else ""))
+
+
+# ------------------------------------------------------------ programa principal
 
 def leer_archivo(ruta):
-    """Lee un archivo con una URL por línea. Formato: URL  o  URL | selector CSS.
-    Las líneas vacías y las que empiezan con # se ignoran."""
+    """Una URL por línea; opcional 'URL | selector de tarjeta'. Ignora vacías y #comentarios."""
     objetivos = []
     for linea in Path(ruta).read_text(encoding="utf-8").splitlines():
         linea = linea.strip()
-        if not linea or linea.startswith("#"):
-            continue
-        url, _, selector = linea.partition("|")
-        objetivos.append((url.strip(), selector.strip() or None))
+        if linea and not linea.startswith("#"):
+            url, _, selector = linea.partition("|")
+            objetivos.append((url.strip(), selector.strip() or None))
     return objetivos
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Avisa cuando una o varias tiendas suben productos nuevos.")
-    ap.add_argument("urls", nargs="*", help="Una o más páginas a vigilar")
-    ap.add_argument("-a", "--archivo",
-                    help="Archivo con una URL por línea (opcional: 'URL | selector')")
-    ap.add_argument("--intervalo", type=int, default=600,
-                    help="Segundos entre vueltas completas (por defecto 600 = 10 min)")
-    ap.add_argument("--selector",
-                    help="Selector CSS para las URLs pasadas por línea de comandos")
-    ap.add_argument("--una-vez", action="store_true",
-                    help="Revisar todo una sola vez y salir (útil con cron)")
-    ap.add_argument("--reiniciar", action="store_true",
-                    help="Borrar lo guardado y empezar de cero")
+    ap = argparse.ArgumentParser(description="Avisa cuando tiendas online suben productos nuevos.")
+    ap.add_argument("urls", nargs="*", help="Páginas a vigilar")
+    ap.add_argument("-a", "--archivo", help="Archivo con una URL por línea (opcional 'URL | selector')")
+    ap.add_argument("--selector", help="Selector CSS de la tarjeta para las URLs de la línea de comandos")
+    ap.add_argument("--intervalo", type=int, default=600, help="Segundos entre vueltas (por defecto 600)")
+    ap.add_argument("--una-vez", action="store_true", help="Revisar una sola vez y salir")
+    ap.add_argument("--probar", action="store_true", help="Solo mostrar los productos detectados")
     args = ap.parse_args()
 
     objetivos = [(u, args.selector) for u in args.urls]
@@ -339,26 +358,31 @@ def main():
     if not objetivos:
         ap.error("Indica al menos una URL o un archivo con --archivo urls.txt")
 
-    if args.reiniciar:
-        for url, _ in objetivos:
-            archivo_estado(url).unlink(missing_ok=True)
-
-    print(f"Vigilando {len(objetivos)} página(s). Estado en {archivo_estado(objetivos[0][0]).parent}")
-    while True:
-        for n, (url, selector) in enumerate(objetivos):
+    if args.probar:
+        for url, selector in objetivos:
             try:
-                revisar(url, selector, archivo_estado(url))
-            except Exception as e:  # una página rota no detiene a las demás
-                print(f"[{datetime.now():%H:%M:%S}] Error con {url}: {e}")
-            if n < len(objetivos) - 1:
-                time.sleep(3)  # pequeña pausa entre páginas
+                probar(url, selector)
+            except Exception as e:
+                print(f"Error con {url} → {e}")
+            print("-" * 60)
+        return
+
+    print(f"Vigilando {len(objetivos)} página(s).")
+    while True:
+        for i, (url, selector) in enumerate(objetivos):
+            try:
+                revisar(url, selector)
+            except Exception as e:
+                print(f"[{datetime.now():%H:%M:%S}] Error con {url} → {e}")
+            if i < len(objetivos) - 1:
+                time.sleep(3)
         if args.una_vez:
             break
-        time.sleep(max(60, args.intervalo))  # mínimo 1 min, para no saturar las tiendas
+        time.sleep(max(60, args.intervalo))
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        sys.exit("\nDetenido.")
+        print("\nDetenido.")
