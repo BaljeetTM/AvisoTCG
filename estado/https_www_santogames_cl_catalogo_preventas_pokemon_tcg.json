@@ -5,7 +5,7 @@
   "https://www.santogames.cl/pokemon-tcg-valentines-box-2027-preventa-proximamente": {
    "nombre": "Pokémon TCG: Valentine's Box 2027 (PREVENTA PRÓXIMAMENTE)",
    "url": "https://www.santogames.cl/pokemon-tcg-valentines-box-2027-preventa-proximamente",
-   "precio": 39990,
+   "precio": 40,
    "precio_antes": null,
    "agotado": true,
    "sku": "NDPK10734"
@@ -13,7 +13,7 @@
   "https://www.santogames.cl/pokemon-tcg-mega-rayquaza-ex-premium-tournament-collection-ingles-preventa-proximamente": {
    "nombre": "Pokémon TCG: Mega Rayquaza ex Premium Tournament Collection (INGLÉS) – PREVENTA PRÓXIMAMENTE",
    "url": "https://www.santogames.cl/pokemon-tcg-mega-rayquaza-ex-premium-tournament-collection-ingles-preventa-proximamente",
-   "precio": 64990,
+   "precio": 66,
    "precio_antes": null,
    "agotado": true,
    "sku": "NDPK10688"
@@ -21,31 +21,31 @@
   "https://www.santogames.cl/pokemon-tcg-unova-heavy-hitters-premium-collection-en": {
    "nombre": "PREVENTA Pokémon TCG Unova Heavy Hitters Premium [EN]",
    "url": "https://www.santogames.cl/pokemon-tcg-unova-heavy-hitters-premium-collection-en",
-   "precio": 79990,
-   "precio_antes": 89990,
+   "precio": 81,
+   "precio_antes": 91,
    "agotado": true,
    "sku": "10-10458-101"
   },
   "https://www.santogames.cl/pokemon-tcg-mega-greninja-ex-league-battle-deck-es": {
    "nombre": "Pokémon TCG: Mega Greninja ex League Battle Deck (ES)",
    "url": "https://www.santogames.cl/pokemon-tcg-mega-greninja-ex-league-battle-deck-es",
-   "precio": 38990,
-   "precio_antes": 42990,
+   "precio": 39,
+   "precio_antes": 43,
    "agotado": true,
    "sku": "10-10633-106"
   },
   "https://www.santogames.cl/pokemon-tcg-mega-greninja-ex-league-battle-deck-en": {
    "nombre": "Pokémon TCG: Mega Greninja ex League Battle Deck (EN)",
    "url": "https://www.santogames.cl/pokemon-tcg-mega-greninja-ex-league-battle-deck-en",
-   "precio": 38990,
-   "precio_antes": 42990,
+   "precio": 39,
+   "precio_antes": 43,
    "agotado": true,
    "sku": "10-10633-101"
   },
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-greninja-ex-tin-ingles": {
    "nombre": "Pokémon TCG: 30th Celebration Greninja ex Tin (INGLÉS)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-greninja-ex-tin-ingles",
-   "precio": 34990,
+   "precio": 35,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10464-101"
@@ -53,7 +53,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-sylveon-ex-tin-ingles": {
    "nombre": "Pokémon TCG: 30th Celebration Sylveon ex Tin (INGLÉS)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-sylveon-ex-tin-ingles",
-   "precio": 34990,
+   "precio": 35,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10464-101"
@@ -61,7 +61,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-mewtwo-figure-collection-espanol": {
    "nombre": "Pokémon TCG: 30th Celebration Mewtwo Figure Collection (ESPAÑOL)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-mewtwo-figure-collection-espanol",
-   "precio": 48990,
+   "precio": 49,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10452-106"
@@ -69,7 +69,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-mewtwo-figure-collection-ingles": {
    "nombre": "Pokémon TCG: 30th Celebration Mewtwo Figure Collection (INGLÉS)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-mewtwo-figure-collection-ingles",
-   "precio": 78990,
+   "precio": 80,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10452-120"
@@ -77,7 +77,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-mew-figure-collection-espanol": {
    "nombre": "Pokémon TCG: 30th Celebration Mew Figure Collection (ESPAÑOL)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-mew-figure-collection-espanol",
-   "precio": 48990,
+   "precio": 49,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10452-106"
@@ -85,7 +85,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-mew-figure-collection-ingles": {
    "nombre": "Pokémon TCG: 30th Celebration Mew Figure Collection (INGLÉS)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-mew-figure-collection-ingles",
-   "precio": 78990,
+   "precio": 80,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10452-120"
@@ -93,7 +93,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-ditto-premium-collection-espanol": {
    "nombre": "Pokémon TCG: 30th Celebration Ditto Premium Collection (ESPAÑOL)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-ditto-premium-collection-espanol",
-   "precio": 69990,
+   "precio": 71,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10469-106"
@@ -101,7 +101,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-ditto-premium-collection-ingles": {
    "nombre": "Pokémon TCG: 30th Celebration Ditto Premium Collection (INGLÉS)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-ditto-premium-collection-ingles",
-   "precio": 89990,
+   "precio": 91,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10469-108"
@@ -109,7 +109,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-night-out-upc-espanol": {
    "nombre": "Pokémon TCG 30th Celebration Night Out UPC (Español)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-night-out-upc-espanol",
-   "precio": 299990,
+   "precio": 304,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10448-106"
@@ -117,7 +117,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-day-out-upc-espanol": {
    "nombre": "Pokémon TCG 30th Day Out UPC (Español)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-day-out-upc-espanol",
-   "precio": 299990,
+   "precio": 304,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10448-106"
@@ -125,7 +125,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-day-out-upc-ingles": {
    "nombre": "Pokémon TCG 30th Day Out UPC (Inglés)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-day-out-upc-ingles",
-   "precio": 349990,
+   "precio": 355,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10448-120"
@@ -133,7 +133,7 @@
   "https://www.santogames.cl/pokemon-tcg-30th-celebration-night-out-upc-ingles": {
    "nombre": "Pokémon TCG 30th Celebration Night Out UPC (Inglés)",
    "url": "https://www.santogames.cl/pokemon-tcg-30th-celebration-night-out-upc-ingles",
-   "precio": 399990,
+   "precio": 406,
    "precio_antes": null,
    "agotado": true,
    "sku": "10-10448-120"
