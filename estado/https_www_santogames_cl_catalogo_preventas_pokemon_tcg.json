@@ -21,16 +21,16 @@
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Español",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol",
-   "precio": 187,
-   "precio_antes": 216,
+   "precio": 186,
+   "precio_antes": 215,
    "agotado": true,
    "sku": "POK1010728110-ES"
   },
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Inglés",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles",
-   "precio": 207,
-   "precio_antes": 216,
+   "precio": 205,
+   "precio_antes": 215,
    "agotado": true,
    "sku": "POK1010728110"
   },
@@ -53,16 +53,16 @@
   "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol": {
    "nombre": "Pokémon Flowing Fists Elite Trainer Box Español",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol",
-   "precio": 59,
-   "precio_antes": 64,
+   "precio": 58,
+   "precio_antes": 63,
    "agotado": true,
    "sku": "PKM-FLO-ETB-ES"
   },
   "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-ingles": {
    "nombre": "Pokémon Flowing Fists Elite Trainer Box Inglés",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-ingles",
-   "precio": 64,
-   "precio_antes": 69,
+   "precio": 63,
+   "precio_antes": 68,
    "agotado": true,
    "sku": "PKM-FLO-ETB-EN"
   },
@@ -77,7 +77,7 @@
   "https://www.santogames.cl/pokemon-tcg-mega-rayquaza-ex-premium-tournament-collection-ingles-preventa-proximamente": {
    "nombre": "Pokémon TCG: Mega Rayquaza ex Premium Tournament Collection (INGLÉS) – PREVENTA PRÓXIMAMENTE",
    "url": "https://www.santogames.cl/pokemon-tcg-mega-rayquaza-ex-premium-tournament-collection-ingles-preventa-proximamente",
-   "precio": 64,
+   "precio": 63,
    "precio_antes": null,
    "agotado": true,
    "sku": "NDPK10688"
