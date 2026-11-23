@@ -21,16 +21,16 @@
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Español",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol",
-   "precio": 185,
-   "precio_antes": 215,
+   "precio": 186,
+   "precio_antes": 216,
    "agotado": true,
    "sku": "POK1010728110-ES"
   },
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Inglés",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles",
-   "precio": 205,
-   "precio_antes": 215,
+   "precio": 206,
+   "precio_antes": 216,
    "agotado": true,
    "sku": "POK1010728110"
   },
@@ -53,7 +53,7 @@
   "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol": {
    "nombre": "Pokémon Flowing Fists Elite Trainer Box Español",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol",
-   "precio": 58,
+   "precio": 59,
    "precio_antes": 63,
    "agotado": true,
    "sku": "PKM-FLO-ETB-ES"
