@@ -5,9 +5,9 @@
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-bundle-espanol": {
    "nombre": "Pokémon TCG: Flowing Fists – Booster Bundle (Español)",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-bundle-espanol",
-   "precio": 29,
+   "precio": 28,
    "precio_antes": 31,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-BB06-EN"
   },
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-bundle-ingles": {
@@ -15,47 +15,47 @@
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-bundle-ingles",
    "precio": 30,
    "precio_antes": 35,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-BB06-EN"
   },
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Español",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-espanol",
-   "precio": 183,
-   "precio_antes": 212,
-   "agotado": true,
+   "precio": 182,
+   "precio_antes": 211,
+   "agotado": false,
    "sku": "POK1010728110-ES"
   },
   "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles": {
    "nombre": "Pokémon TCG: Flowing Fists Booster Box Inglés",
    "url": "https://www.santogames.cl/pokemon-tcg-flowing-fists-booster-box-ingles",
-   "precio": 203,
-   "precio_antes": 212,
-   "agotado": true,
+   "precio": 202,
+   "precio_antes": 211,
+   "agotado": false,
    "sku": "POK1010728110"
   },
   "https://www.santogames.cl/pokemon-flowing-fists-3-pack-blister-wimpod-espanol": {
    "nombre": "Pokémon Flowing Fists 3-Pack Blister Wimpod Español",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-3-pack-blister-wimpod-espanol",
-   "precio": 17,
+   "precio": 15,
    "precio_antes": 21,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-3PK-WIMPOD-EN"
   },
   "https://www.santogames.cl/pokemon-flowing-fists-3-pack-blister-wimpod-ingles": {
    "nombre": "Pokémon Flowing Fists 3-Pack Blister Wimpod Inglés",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-3-pack-blister-wimpod-ingles",
-   "precio": 19,
+   "precio": 15,
    "precio_antes": 21,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-3PK-WIMPOD-EN"
   },
   "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol": {
    "nombre": "Pokémon Flowing Fists Elite Trainer Box Español",
    "url": "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-espanol",
-   "precio": 58,
+   "precio": 57,
    "precio_antes": 62,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-ETB-ES"
   },
   "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-ingles": {
@@ -63,7 +63,7 @@
    "url": "https://www.santogames.cl/pokemon-flowing-fists-elite-trainer-box-ingles",
    "precio": 62,
    "precio_antes": 67,
-   "agotado": true,
+   "agotado": false,
    "sku": "PKM-FLO-ETB-EN"
   },
   "https://www.santogames.cl/pokemon-tcg-valentines-box-2027-preventa-proximamente": {
